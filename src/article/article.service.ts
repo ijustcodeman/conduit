@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { type CreateArticleDto } from './dto/create-article.dto';
 import { type ArticleResponse, type ArticlesResponse } from './dto/article-response.dto';
+import { toArticlePayload } from './mappers/article.mapper';
 import { PrismaService } from '../prisma/prisma.service';
 import slugify from 'slugify';
 
@@ -8,6 +9,8 @@ import slugify from 'slugify';
 export class ArticleService {
   constructor(private prisma: PrismaService) {}
 
+
+  // creates an article
   async create(createArticleDto: CreateArticleDto): Promise<ArticleResponse>{
     const article = createArticleDto.article;
 
@@ -39,16 +42,11 @@ export class ArticleService {
     });
 
     return {
-      article: {
-        slug: createdArticle.slug,
-        title: createdArticle.title,
-        description: createdArticle.description,
-        body: createdArticle.body,
-        tagList: createdArticle.tags.map(t => t.name),
-      },
+      article: toArticlePayload(createdArticle),
     };
   }
 
+  // returns all articles
   async findAll(): Promise<ArticlesResponse> {
   const articles = await this.prisma.article.findMany({
     include: {
@@ -61,16 +59,11 @@ export class ArticleService {
   }
 
   return {
-    articles: articles.map(article => ({
-      slug: article.slug,
-      title: article.title,
-      description: article.description,
-      body: article.body,
-      tagList: article.tags.map(t => t.name),
-    })),
+    articles: articles.map(toArticlePayload),
   };
   }
 
+  // finds an article by a slug
   async findArticleBySlug(slug: string): Promise<ArticleResponse>{
     const article = await this.prisma.article.findUnique({
       where: {
@@ -87,14 +80,7 @@ export class ArticleService {
     }
 
     return {
-      article: {
-        slug: article.slug,
-        title: article.title,
-        description: article.description,
-        body: article.body,
-        tagList: article.tags.map(t => t.name),
-      },
+      article: toArticlePayload(article),
     };
   }
-
 }
