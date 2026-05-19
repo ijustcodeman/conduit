@@ -10,6 +10,7 @@ export class ArticleService {
   async create(createArticleDto: CreateArticleDto){
     const article = createArticleDto.article;
 
+
     const slug = slugify(article.title, {
       lower: true,
       strict: true,

@@ -1,4 +1,16 @@
 // @ts-check
+
+import js from '@eslint/js';
+import { defineConfig } from 'eslint/config';
+import tseslint from 'typescript-eslint';
+
+export default defineConfig(
+  js.configs.recommended,
+  tseslint.configs.strict,
+  tseslint.configs.stylistic
+);
+
+/*
 import eslint from '@eslint/js';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
@@ -33,3 +45,5 @@ export default tseslint.config(
     },
   },
 );
+
+*/
