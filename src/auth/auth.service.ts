@@ -1,7 +1,81 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { type AuthResponse } from './dto/auth-response.dto';
+import { type LoginUserDto } from './dto/login-user.dto';
+import { type RegisterUserDto } from './dto/register-user.dto';
 import { UserService } from '../user/user.service';
+import { toUserResponsePayload } from '../user/mappers/user.mapper';
 
 @Injectable()
 export class AuthService {
-    constructor(private user: UserService) {} 
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+  ) {}
+
+  async register(registerUserDto: RegisterUserDto): Promise<AuthResponse> {
+    const existingEmail = await this.userService.findByEmail(
+      registerUserDto.user.email,
+    );
+
+    if (existingEmail) {
+      throw new ConflictException('Email already exists');
+    }
+
+    const existingUsername = await this.userService.findByUsername(registerUserDto.user.username,);  
+
+    if (existingUsername) {
+      throw new ConflictException('Username already exists');
+    }
+
+    const hashedPassword = await bcrypt.hash(registerUserDto.user.password, 10);
+
+    const user = await this.userService.createUser({
+      username: registerUserDto.user.username,
+      email: registerUserDto.user.email,
+      password: hashedPassword,
+    });
+
+    const token = await this.signToken(user.id);
+
+    return {
+      user: toUserResponsePayload({
+        ...user,
+        token,
+      }),
+    };
+  }
+
+  async login(loginUserDto: LoginUserDto): Promise<AuthResponse> {
+    const user = await this.userService.findByEmail(loginUserDto.user.email);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const passwordMatches = await bcrypt.compare(
+      loginUserDto.user.password,
+      user.password,
+    );
+
+    if (!passwordMatches) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const token = await this.signToken(user.id);
+
+    return {
+      user: toUserResponsePayload({
+        ...user,
+        token,
+      }),
+    };
+  }
+
+  private async signToken(userId: number): Promise<string> {
+    return this.jwtService.signAsync({
+      sub: userId,
+    });
+  }
 }

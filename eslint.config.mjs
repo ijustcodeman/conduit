@@ -11,9 +11,10 @@ export default defineConfig(
 
   // no warnings for types
   {
-  rules: {
-    '@typescript-eslint/consistent-type-definitions': ['warn', 'type'],
-  },
+    rules: {
+      '@typescript-eslint/consistent-type-definitions': ['warn', 'type'],
+      '@typescript-eslint/no-extraneous-class': 'off',
+    },
   }
 );
 

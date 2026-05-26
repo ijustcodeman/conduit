@@ -1,7 +1,36 @@
 import { Injectable } from '@nestjs/common';
+import { type UserModel } from '../../generated/prisma/models/User';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UserService {
-    constructor(private prisma: PrismaService) {} 
+  constructor(private prisma: PrismaService) {}
+
+  async createUser(user: {
+    username: string;
+    email: string;
+    password: string;
+  }): Promise<UserModel> {
+    return this.prisma.user.create({
+      data: user,
+    });
+  }
+
+  async findByEmail(email: string): Promise<UserModel | null> {
+    return this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+  }
+
+  // we could merge this together with findByEmail but for testing and
+  // debugging purposes we will leave it like that
+  async findByUsername(username: string): Promise<UserModel | null> {
+  return this.prisma.user.findUnique({
+    where: {
+      username,
+    },
+  });
+}
 }
