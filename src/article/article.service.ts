@@ -14,7 +14,6 @@ export class ArticleService {
   async create(createArticleDto: CreateArticleDto): Promise<ArticleResponse>{
     const article = createArticleDto.article;
 
-
     const slug = slugify(article.title, {
       lower: true,
       strict: true,

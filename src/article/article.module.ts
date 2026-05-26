@@ -8,4 +8,5 @@ import { PrismaModule } from '../prisma/prisma.module';
   controllers: [ArticleController],
   providers: [ArticleService],
 })
-export class AppModule {}
+export class ArticleModule {}
+
