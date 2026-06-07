@@ -27,10 +27,10 @@ export class UserService {
   // we could merge this together with findByEmail but for testing and
   // debugging purposes we will leave it like that
   async findByUsername(username: string): Promise<UserModel | null> {
-  return this.prisma.user.findUnique({
-    where: {
-      username,
-    },
-  });
-}
+    return this.prisma.user.findUnique({
+      where: {
+        username,
+      },
+    });
+  }
 }

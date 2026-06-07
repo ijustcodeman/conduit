@@ -1,16 +1,20 @@
-import { ArticlePayload } from './create-article.dto';
+import * as z from 'zod';
+import { ArticlePayloadSchema } from './create-article.dto';
 
-// Article shape extended with slug
-export type ArticleResponsePayload = ArticlePayload & {
-    slug: string;
-};
+export const ArticleResponsePayloadSchema = ArticlePayloadSchema.extend({
+  slug: z.string(),
+});
 
-// Response for a single article
-export type ArticleResponse = {
-    article: ArticleResponsePayload;
-};
+export const ArticleResponseSchema = z.object({
+  article: ArticleResponsePayloadSchema,
+});
 
-// Response for many articles
-export type ArticlesResponse = {
-  articles: ArticleResponsePayload[];
-};
+export const ArticlesResponseSchema = z.object({
+  articles: z.array(ArticleResponsePayloadSchema),
+});
+
+export type ArticleResponsePayload = z.infer<
+  typeof ArticleResponsePayloadSchema
+>;
+export type ArticleResponse = z.infer<typeof ArticleResponseSchema>;
+export type ArticlesResponse = z.infer<typeof ArticlesResponseSchema>;

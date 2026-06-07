@@ -1,5 +1,8 @@
-import { type UserResponsePayload } from '../../user/dto/user-response.dto';
+import * as z from 'zod';
+import { UserResponsePayloadSchema } from '../../user/dto/user-response.dto';
 
-export type AuthResponse = {
-  user: UserResponsePayload;
-};
+export const AuthResponseSchema = z.object({
+  user: UserResponsePayloadSchema,
+});
+
+export type AuthResponse = z.infer<typeof AuthResponseSchema>;

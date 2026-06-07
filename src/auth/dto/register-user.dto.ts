@@ -1,9 +1,14 @@
-export type RegisterUserPayload = {
-  username: string;
-  email: string;
-  password: string;
-};
+import * as z from 'zod';
 
-export type RegisterUserDto = {
-  user: RegisterUserPayload;
-};
+export const RegisterUserPayloadSchema = z.object({
+  username: z.string().min(1),
+  email: z.string().email(),
+  password: z.string().min(1),
+});
+
+export const RegisterUserDtoSchema = z.object({
+  user: RegisterUserPayloadSchema,
+});
+
+export type RegisterUserPayload = z.infer<typeof RegisterUserPayloadSchema>;
+export type RegisterUserDto = z.infer<typeof RegisterUserDtoSchema>;

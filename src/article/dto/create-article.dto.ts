@@ -1,12 +1,15 @@
-// Payload used when creating an article
-export type ArticlePayload = {
-    title: string;
-    description: string;
-    body: string;
-    tagList: string[];
-};
+import * as z from 'zod';
 
-// Request body shape for POST /articles
-export type CreateArticleDto = {
-    article: ArticlePayload;
-};
+export const ArticlePayloadSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  body: z.string().min(1),
+  tagList: z.array(z.string().min(1)).default([]),
+});
+
+export const CreateArticleDtoSchema = z.object({
+  article: ArticlePayloadSchema,
+});
+
+export type ArticlePayload = z.infer<typeof ArticlePayloadSchema>;
+export type CreateArticleDto = z.infer<typeof CreateArticleDtoSchema>;
