@@ -1,15 +1,15 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { type AuthResponse } from './dto/auth-response.dto';
 import { LoginUserDtoSchema } from './dto/login-user.dto';
 import { RegisterUserDtoSchema } from './dto/register-user.dto';
 import { parseWithSchema } from '../common/zod-validation';
 
-@Controller('auth')
+@Controller('users')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('register')
+  @Post()
   register(@Body() body: unknown): Promise<AuthResponse> {
     const registerUserDto = parseWithSchema(RegisterUserDtoSchema, body);
 
@@ -17,6 +17,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   login(@Body() body: unknown): Promise<AuthResponse> {
     const loginUserDto = parseWithSchema(LoginUserDtoSchema, body);
 
