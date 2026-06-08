@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { type UserModel } from '../../generated/prisma/models/User';
+import { type UpdateUserPayload } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -31,6 +32,26 @@ export class UserService {
       where: {
         username,
       },
+    });
+  }
+
+  async findById(id: number): Promise<UserModel | null> {
+    return this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+  async updateUser(
+    id: number,
+    user: UpdateUserPayload,
+  ): Promise<UserModel> {
+    return this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: user,
     });
   }
 }

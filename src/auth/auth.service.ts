@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { type AuthResponse } from './dto/auth-response.dto';
 import { type LoginUserDto } from './dto/login-user.dto';
 import { type RegisterUserDto } from './dto/register-user.dto';
+import { type UpdateUserDto } from '../user/dto/update-user.dto';
 import { UserService } from '../user/user.service';
 import { toUserResponsePayload } from '../user/mappers/user.mapper';
 
@@ -75,6 +76,56 @@ export class AuthService {
       user: toUserResponsePayload({
         ...user,
         token,
+      }),
+    };
+  }
+
+  async getCurrentUser(userId: number): Promise<AuthResponse> {
+    const user = await this.userService.findById(userId);
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    return {
+      user: toUserResponsePayload({
+        ...user,
+        token: await this.signToken(user.id),
+      }),
+    };
+  }
+
+  async updateCurrentUser(
+    userId: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<AuthResponse> {
+    const { email, username, password } = updateUserDto.user;
+
+    if (email) {
+      const existingEmail = await this.userService.findByEmail(email);
+
+      if (existingEmail && existingEmail.id !== userId) {
+        throw new ConflictException('Email already exists');
+      }
+    }
+
+    if (username) {
+      const existingUsername = await this.userService.findByUsername(username);
+
+      if (existingUsername && existingUsername.id !== userId) {
+        throw new ConflictException('Username already exists');
+      }
+    }
+
+    const user = await this.userService.updateUser(userId, {
+      ...updateUserDto.user,
+      ...(password ? { password: await bcrypt.hash(password, 10) } : {}),
+    });
+
+    return {
+      user: toUserResponsePayload({
+        ...user,
+        token: await this.signToken(user.id),
       }),
     };
   }

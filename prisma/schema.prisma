@@ -32,4 +32,6 @@ model User {
   username  String  @unique
   email     String  @unique
   password  String
+  bio       String  @default("")
+  image     String  @default("")
 }
