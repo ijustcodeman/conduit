@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -12,6 +13,7 @@ import { type UserModel } from '../../generated/prisma/models/User';
 import { ArticleService } from './article.service';
 import { type ArticleResponse } from './dto/article-response.dto';
 import { CreateArticleDtoSchema } from './dto/create-article.dto';
+import { ListArticlesQuerySchema } from './dto/list-articles-query.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { parseWithSchema } from '../common/zod-validation';
 
@@ -35,8 +37,10 @@ export class ArticleController {
   }
 
   @Get()
-  getAllArticles() {
-    return this.articleService.findAll();
+  getAllArticles(@Query() query: unknown) {
+    const filters = parseWithSchema(ListArticlesQuerySchema, query);
+
+    return this.articleService.findAll(filters);
   }
 
   @Get(':slug')

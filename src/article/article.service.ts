@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '../../generated/prisma/client';
 import { type CreateArticleDto } from './dto/create-article.dto';
+import { type ListArticlesQuery } from './dto/list-articles-query.dto';
 import {
   type ArticleResponse,
   type ArticlesResponse,
@@ -54,6 +55,11 @@ export class ArticleService {
         include: {
           tags: true,
           author: true,
+          _count: {
+            select: {
+              favoritedBy: true,
+            },
+          },
         },
       });
 
@@ -74,12 +80,39 @@ export class ArticleService {
     }
   }
 
-  // returns all articles
-  async findAll(): Promise<ArticlesResponse> {
+  async findAll(filters: ListArticlesQuery): Promise<ArticlesResponse> {
+    const where: Prisma.ArticleWhereInput = {
+      ...(filters.tag && {
+        tags: {
+          some: {
+            name: filters.tag,
+          },
+        },
+      }),
+      ...(filters.author && {
+        author: {
+          username: filters.author,
+        },
+      }),
+      ...(filters.favorited && {
+        favoritedBy: {
+          some: {
+            username: filters.favorited,
+          },
+        },
+      }),
+    };
+
     const articles = await this.prisma.article.findMany({
+      where,
       include: {
         tags: true,
         author: true,
+        _count: {
+          select: {
+            favoritedBy: true,
+          },
+        },
       },
     });
 
@@ -98,6 +131,11 @@ export class ArticleService {
       include: {
         tags: true,
         author: true,
+        _count: {
+          select: {
+            favoritedBy: true,
+          },
+        },
       },
     });
 

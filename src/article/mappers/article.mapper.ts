@@ -13,6 +13,9 @@ type ArticleWithTags = {
     bio: string;
     image: string;
   };
+  _count?: {
+    favoritedBy: number;
+  };
 };
 
 export function toArticlePayload(
@@ -27,7 +30,7 @@ export function toArticlePayload(
     createdAt: article.createdAt.toISOString(),
     updatedAt: article.updatedAt.toISOString(),
     favorited: false,
-    favoritesCount: 0,
+    favoritesCount: article._count?.favoritedBy ?? 0,
     author: {
       username: article.author.username,
       bio: article.author.bio,

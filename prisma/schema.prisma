@@ -22,6 +22,7 @@ model Article {
   authorId    Int
   author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   tags        Tag[]
+  favoritedBy User[]   @relation("ArticleFavorites")
 }
 
 model Tag {
@@ -39,4 +40,5 @@ model User {
   bio       String  @default("")
   image     String  @default("")
   articles  Article[]
+  favorites Article[] @relation("ArticleFavorites")
 }
