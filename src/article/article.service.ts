@@ -103,22 +103,32 @@ export class ArticleService {
       }),
     };
 
-    const articles = await this.prisma.article.findMany({
-      where,
-      include: {
-        tags: true,
-        author: true,
-        _count: {
-          select: {
-            favoritedBy: true,
+    const [articlesCount, articles] = await this.prisma.$transaction([
+      this.prisma.article.count({
+        where,
+      }),
+      this.prisma.article.findMany({
+        where,
+        skip: filters.offset,
+        take: filters.limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+        include: {
+          tags: true,
+          author: true,
+          _count: {
+            select: {
+              favoritedBy: true,
+            },
           },
         },
-      },
-    });
+      }),
+    ]);
 
     return {
       articles: articles.map(toArticlePayload),
-      articlesCount: articles.length,
+      articlesCount,
     };
   }
 
