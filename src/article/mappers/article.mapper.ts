@@ -16,6 +16,7 @@ type ArticleWithTags = {
   _count?: {
     favoritedBy: number;
   };
+  favoritedBy?: { id: number }[];
 };
 
 export function toArticlePayload(
@@ -29,7 +30,7 @@ export function toArticlePayload(
     tagList: article.tags.map(tag => tag.name),
     createdAt: article.createdAt.toISOString(),
     updatedAt: article.updatedAt.toISOString(),
-    favorited: false,
+    favorited: (article.favoritedBy?.length ?? 0) > 0,
     favoritesCount: article._count?.favoritedBy ?? 0,
     author: {
       username: article.author.username,

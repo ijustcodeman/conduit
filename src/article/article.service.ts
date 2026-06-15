@@ -14,6 +14,28 @@ import { toArticlePayload } from './mappers/article.mapper';
 import { PrismaService } from '../prisma/prisma.service';
 import slugify from 'slugify';
 
+function articleInclude(currentUserId?: number): Prisma.ArticleInclude {
+  return {
+    tags: true,
+    author: true,
+    _count: {
+      select: {
+        favoritedBy: true,
+      },
+    },
+    ...(currentUserId && {
+      favoritedBy: {
+        where: {
+          id: currentUserId,
+        },
+        select: {
+          id: true,
+        },
+      },
+    }),
+  };
+}
+
 @Injectable()
 export class ArticleService {
   constructor(private prisma: PrismaService) {}
@@ -52,15 +74,7 @@ export class ArticleService {
           },
         },
 
-        include: {
-          tags: true,
-          author: true,
-          _count: {
-            select: {
-              favoritedBy: true,
-            },
-          },
-        },
+        include: articleInclude(authorId),
       });
 
       return {
@@ -80,7 +94,10 @@ export class ArticleService {
     }
   }
 
-  async findAll(filters: ListArticlesQuery): Promise<ArticlesResponse> {
+  async findAll(
+    filters: ListArticlesQuery,
+    currentUserId?: number,
+  ): Promise<ArticlesResponse> {
     const where: Prisma.ArticleWhereInput = {
       ...(filters.tag && {
         tags: {
@@ -114,15 +131,7 @@ export class ArticleService {
         orderBy: {
           createdAt: 'desc',
         },
-        include: {
-          tags: true,
-          author: true,
-          _count: {
-            select: {
-              favoritedBy: true,
-            },
-          },
-        },
+        include: articleInclude(currentUserId),
       }),
     ]);
 
@@ -132,21 +141,16 @@ export class ArticleService {
     };
   }
 
-  async findArticleBySlug(slug: string): Promise<ArticleResponse> {
+  async findArticleBySlug(
+    slug: string,
+    currentUserId?: number,
+  ): Promise<ArticleResponse> {
     const article = await this.prisma.article.findUnique({
       where: {
         slug,
       },
 
-      include: {
-        tags: true,
-        author: true,
-        _count: {
-          select: {
-            favoritedBy: true,
-          },
-        },
-      },
+      include: articleInclude(currentUserId),
     });
 
     if (!article) {
@@ -156,5 +160,48 @@ export class ArticleService {
     return {
       article: toArticlePayload(article),
     };
+  }
+
+  async favorite(slug: string, userId: number): Promise<ArticleResponse> {
+    return this.updateFavorite(slug, userId, 'connect');
+  }
+
+  async unfavorite(slug: string, userId: number): Promise<ArticleResponse> {
+    return this.updateFavorite(slug, userId, 'disconnect');
+  }
+
+  private async updateFavorite(
+    slug: string,
+    userId: number,
+    action: 'connect' | 'disconnect',
+  ): Promise<ArticleResponse> {
+    try {
+      const article = await this.prisma.article.update({
+        where: {
+          slug,
+        },
+        data: {
+          favoritedBy: {
+            [action]: {
+              id: userId,
+            },
+          },
+        },
+        include: articleInclude(userId),
+      });
+
+      return {
+        article: toArticlePayload(article),
+      };
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException('Article not found');
+      }
+
+      throw error;
+    }
   }
 }

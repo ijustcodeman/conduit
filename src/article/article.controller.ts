@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -15,10 +18,15 @@ import { type ArticleResponse } from './dto/article-response.dto';
 import { CreateArticleDtoSchema } from './dto/create-article.dto';
 import { ListArticlesQuerySchema } from './dto/list-articles-query.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { OptionalJwtAuthGuard } from '../auth/guards/optional-jwt-auth.guard';
 import { parseWithSchema } from '../common/zod-validation';
 
 type AuthenticatedRequest = Request & {
   user: UserModel;
+};
+
+type OptionalAuthenticatedRequest = Request & {
+  user?: UserModel;
 };
 
 @Controller('articles')
@@ -37,14 +45,41 @@ export class ArticleController {
   }
 
   @Get()
-  getAllArticles(@Query() query: unknown) {
+  @UseGuards(OptionalJwtAuthGuard)
+  getAllArticles(
+    @Req() request: OptionalAuthenticatedRequest,
+    @Query() query: unknown,
+  ) {
     const filters = parseWithSchema(ListArticlesQuerySchema, query);
 
-    return this.articleService.findAll(filters);
+    return this.articleService.findAll(filters, request.user?.id);
   }
 
   @Get(':slug')
-  findBySlug(@Param('slug') slug: string) {
-    return this.articleService.findArticleBySlug(slug);
+  @UseGuards(OptionalJwtAuthGuard)
+  findBySlug(
+    @Req() request: OptionalAuthenticatedRequest,
+    @Param('slug') slug: string,
+  ) {
+    return this.articleService.findArticleBySlug(slug, request.user?.id);
+  }
+
+  @Post(':slug/favorite')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  favoriteArticle(
+    @Req() request: AuthenticatedRequest,
+    @Param('slug') slug: string,
+  ): Promise<ArticleResponse> {
+    return this.articleService.favorite(slug, request.user.id);
+  }
+
+  @Delete(':slug/favorite')
+  @UseGuards(JwtAuthGuard)
+  unfavoriteArticle(
+    @Req() request: AuthenticatedRequest,
+    @Param('slug') slug: string,
+  ): Promise<ArticleResponse> {
+    return this.articleService.unfavorite(slug, request.user.id);
   }
 }
