@@ -11,6 +11,7 @@
       "@prisma/engines",
       "bcrypt",
       "better-sqlite3",
+      "esbuild",
       "prisma",
       "unrs-resolver"
     ]
@@ -18,6 +19,9 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "frontend:build": "pnpm --filter article-frontend build",
+    "frontend:dev": "pnpm --filter article-frontend dev",
+    "frontend:preview": "pnpm --filter article-frontend preview",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
