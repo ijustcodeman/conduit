@@ -1,87 +1,108 @@
-export type User = {
-  username: string;
-  email: string;
-  token: string;
-  bio: string;
-  image: string;
-};
+import * as z from 'zod';
 
-export type Profile = {
-  username: string;
-  bio: string;
-  image: string;
-  following: boolean;
-};
+export const UserSchema = z.object({
+  username: z.string(),
+  email: z.email(),
+  token: z.string(),
+  bio: z.string(),
+  image: z.string(),
+});
 
-export type Article = {
-  slug: string;
-  title: string;
-  description: string;
-  body: string;
-  tagList: string[];
-  createdAt: string;
-  updatedAt: string;
-  favorited: boolean;
-  favoritesCount: number;
-  author: Profile;
-};
+export const ProfileSchema = z.object({
+  username: z.string(),
+  bio: z.string(),
+  image: z.string(),
+  following: z.boolean(),
+});
 
-export type Comment = {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-  body: string;
-  author: Profile;
-};
+export const ArticleSchema = z.object({
+  slug: z.string(),
+  title: z.string(),
+  description: z.string(),
+  body: z.string(),
+  tagList: z.array(z.string()),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+  favorited: z.boolean(),
+  favoritesCount: z.number().int().nonnegative(),
+  author: ProfileSchema,
+});
 
-export type AuthResponse = {
-  user: User;
-};
+export const CommentSchema = z.object({
+  id: z.number().int(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+  body: z.string(),
+  author: ProfileSchema,
+});
 
-export type ArticlesResponse = {
-  articles: Article[];
-  articlesCount: number;
-};
+export const AuthResponseSchema = z.object({
+  user: UserSchema,
+});
 
-export type ArticleResponse = {
-  article: Article;
-};
+export const ArticlesResponseSchema = z.object({
+  articles: z.array(ArticleSchema),
+  articlesCount: z.number().int().nonnegative(),
+});
 
-export type CommentsResponse = {
-  comments: Comment[];
-};
+export const ArticleResponseSchema = z.object({
+  article: ArticleSchema,
+});
 
-export type CommentResponse = {
-  comment: Comment;
-};
+export const CommentsResponseSchema = z.object({
+  comments: z.array(CommentSchema),
+});
 
-export type ProfileResponse = {
-  profile: Profile;
-};
+export const CommentResponseSchema = z.object({
+  comment: CommentSchema,
+});
 
-export type TagsResponse = {
-  tags: string[];
-};
+export const ProfileResponseSchema = z.object({
+  profile: ProfileSchema,
+});
 
-export type LoginPayload = {
-  email: string;
-  password: string;
-};
+export const TagsResponseSchema = z.object({
+  tags: z.array(z.string()),
+});
 
-export type RegisterPayload = LoginPayload & {
-  username: string;
-};
+export const LoginPayloadSchema = z.object({
+  email: z.email(),
+  password: z.string().min(1),
+});
 
-export type UpdateUserPayload = Partial<{
-  username: string;
-  email: string;
-  password: string;
-  bio: string;
-  image: string;
-}>;
+export const RegisterPayloadSchema = LoginPayloadSchema.extend({
+  username: z.string().min(1),
+});
 
-export type SpecErrorResponse = {
-  errors?: {
-    body?: string[];
-  };
-};
+export const UpdateUserPayloadSchema = z
+  .object({
+    username: z.string().min(1).optional(),
+    email: z.email().optional(),
+    password: z.string().min(8).optional(),
+    bio: z.string().optional(),
+    image: z.string().optional(),
+  })
+  .refine(user => Object.values(user).some(value => value !== undefined), {
+    message: 'At least one user field is required',
+  });
+
+export const SpecErrorResponseSchema = z.object({
+  errors: z.object({
+    body: z.array(z.string()),
+  }),
+});
+
+export type User = z.infer<typeof UserSchema>;
+export type Profile = z.infer<typeof ProfileSchema>;
+export type Article = z.infer<typeof ArticleSchema>;
+export type Comment = z.infer<typeof CommentSchema>;
+export type AuthResponse = z.infer<typeof AuthResponseSchema>;
+export type ArticlesResponse = z.infer<typeof ArticlesResponseSchema>;
+export type ArticleResponse = z.infer<typeof ArticleResponseSchema>;
+export type CommentsResponse = z.infer<typeof CommentsResponseSchema>;
+export type CommentResponse = z.infer<typeof CommentResponseSchema>;
+export type ProfileResponse = z.infer<typeof ProfileResponseSchema>;
+export type TagsResponse = z.infer<typeof TagsResponseSchema>;
+export type LoginPayload = z.infer<typeof LoginPayloadSchema>;
+export type RegisterPayload = z.infer<typeof RegisterPayloadSchema>;
+export type UpdateUserPayload = z.infer<typeof UpdateUserPayloadSchema>;

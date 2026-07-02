@@ -1,4 +1,5 @@
-import type { SpecErrorResponse } from '@/types/api';
+import * as z from 'zod';
+import { SpecErrorResponseSchema } from '@/types/api';
 
 const API_BASE_URL = '/api';
 
@@ -25,6 +26,10 @@ export function getErrorMessages(error: unknown): string[] {
     return error.messages;
   }
 
+  if (error instanceof z.ZodError) {
+    return error.issues.map(issue => issue.message);
+  }
+
   if (error instanceof Error) {
     return [error.message];
   }
@@ -40,6 +45,7 @@ type ApiOptions = {
 
 export async function apiRequest<T>(
   path: string,
+  schema: z.ZodType<T>,
   options: ApiOptions = {},
 ): Promise<T> {
   const url = new URL(`${API_BASE_URL}${path}`, window.location.origin);
@@ -71,7 +77,7 @@ export async function apiRequest<T>(
   });
 
   if (response.status === 204) {
-    return undefined as T;
+    return schema.parse(undefined);
   }
 
   const data: unknown = await response
@@ -82,15 +88,23 @@ export async function apiRequest<T>(
     throw new ApiError(response.status, parseErrorMessages(data));
   }
 
-  return data as T;
+  const result = schema.safeParse(data);
+
+  if (!result.success) {
+    console.error('Unexpected API response shape', result.error);
+    throw new ApiError(response.status, [
+      'Received an unexpected response from the server.',
+    ]);
+  }
+
+  return result.data;
 }
 
 function parseErrorMessages(data: unknown): string[] {
-  const specError = data as SpecErrorResponse | undefined;
-  const messages = specError?.errors?.body;
+  const result = SpecErrorResponseSchema.safeParse(data);
 
-  if (Array.isArray(messages) && messages.length > 0) {
-    return messages;
+  if (result.success && result.data.errors.body.length > 0) {
+    return result.data.errors.body;
   }
 
   return ['Something went wrong. Please try again.'];

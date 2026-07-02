@@ -1,11 +1,14 @@
 import { computed, ref, watch } from 'vue';
 import { apiRequest, getErrorMessages, setTokenProvider } from '@/lib/api';
-import type {
-  AuthResponse,
-  LoginPayload,
-  RegisterPayload,
-  UpdateUserPayload,
-  User,
+import {
+  AuthResponseSchema,
+  LoginPayloadSchema,
+  RegisterPayloadSchema,
+  UpdateUserPayloadSchema,
+  type LoginPayload,
+  type RegisterPayload,
+  type UpdateUserPayload,
+  type User,
 } from '@/types/api';
 
 const TOKEN_STORAGE_KEY = 'article.authToken';
@@ -31,9 +34,9 @@ const isAuthenticated = computed(() => Boolean(token.value && user.value));
 export function useAuth() {
   async function login(payload: LoginPayload) {
     const response = await runAuthRequest(() =>
-      apiRequest<AuthResponse>('/users/login', {
+      apiRequest('/users/login', AuthResponseSchema, {
         method: 'POST',
-        body: { user: payload },
+        body: { user: LoginPayloadSchema.parse(payload) },
       }),
     );
 
@@ -42,9 +45,9 @@ export function useAuth() {
 
   async function register(payload: RegisterPayload) {
     const response = await runAuthRequest(() =>
-      apiRequest<AuthResponse>('/users', {
+      apiRequest('/users', AuthResponseSchema, {
         method: 'POST',
-        body: { user: payload },
+        body: { user: RegisterPayloadSchema.parse(payload) },
       }),
     );
 
@@ -53,9 +56,9 @@ export function useAuth() {
 
   async function updateCurrentUser(payload: UpdateUserPayload) {
     const response = await runAuthRequest(() =>
-      apiRequest<AuthResponse>('/user', {
+      apiRequest('/user', AuthResponseSchema, {
         method: 'PUT',
-        body: { user: payload },
+        body: { user: UpdateUserPayloadSchema.parse(payload) },
       }),
     );
 
@@ -71,7 +74,7 @@ export function useAuth() {
     try {
       isLoading.value = true;
       errorMessages.value = [];
-      const response = await apiRequest<AuthResponse>('/user');
+      const response = await apiRequest('/user', AuthResponseSchema);
       user.value = response.user;
     } catch (error) {
       logout();
