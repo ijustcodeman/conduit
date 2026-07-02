@@ -86,6 +86,10 @@ export const UpdateUserPayloadSchema = z
     message: 'At least one user field is required',
   });
 
+export const CreateCommentPayloadSchema = z.object({
+  body: z.string().min(1),
+});
+
 export const SpecErrorResponseSchema = z.object({
   errors: z.object({
     body: z.array(z.string()),
@@ -106,3 +110,4 @@ export type TagsResponse = z.infer<typeof TagsResponseSchema>;
 export type LoginPayload = z.infer<typeof LoginPayloadSchema>;
 export type RegisterPayload = z.infer<typeof RegisterPayloadSchema>;
 export type UpdateUserPayload = z.infer<typeof UpdateUserPayloadSchema>;
+export type CreateCommentPayload = z.infer<typeof CreateCommentPayloadSchema>;
