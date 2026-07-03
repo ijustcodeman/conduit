@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { onBeforeUnmount, onMounted, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 
@@ -10,6 +10,14 @@ const form = reactive({
   username: '',
   email: '',
   password: '',
+});
+
+onMounted(() => {
+  auth.clearErrors();
+});
+
+onBeforeUnmount(() => {
+  auth.clearErrors();
 });
 
 async function submitRegistration() {

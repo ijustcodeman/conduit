@@ -1,4 +1,5 @@
 import { ref, watch, type Ref } from 'vue';
+import * as z from 'zod';
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 import { apiRequest, getErrorMessages } from '@/lib/api';
@@ -10,6 +11,7 @@ export function useArticle(slug: Ref<string>) {
   const article = ref<Article | null>(null);
   const isLoading = ref(false);
   const isFavoritePending = ref(false);
+  const isDeleting = ref(false);
   const errorMessages = ref<string[]>([]);
   let requestId = 0;
 
@@ -80,12 +82,35 @@ export function useArticle(slug: Ref<string>) {
     }
   }
 
+  async function deleteArticle() {
+    if (!article.value) {
+      return;
+    }
+
+    try {
+      isDeleting.value = true;
+      errorMessages.value = [];
+
+      await apiRequest(`/articles/${article.value.slug}`, z.undefined(), {
+        method: 'DELETE',
+      });
+
+      await router.push({ name: 'home' });
+    } catch (error) {
+      errorMessages.value = getErrorMessages(error);
+    } finally {
+      isDeleting.value = false;
+    }
+  }
+
   return {
     article,
     isLoading,
     isFavoritePending,
+    isDeleting,
     errorMessages,
     fetchArticle,
     toggleFavorite,
+    deleteArticle,
   };
 }

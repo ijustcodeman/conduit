@@ -65,6 +65,23 @@ export const TagsResponseSchema = z.object({
   tags: z.array(z.string()),
 });
 
+export const ArticlePayloadSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  body: z.string().min(1),
+  tagList: z.array(z.string().min(1)).default([]),
+});
+
+export const UpdateArticlePayloadSchema = z
+  .object({
+    title: z.string().min(1).optional(),
+    description: z.string().min(1).optional(),
+    body: z.string().min(1).optional(),
+  })
+  .refine(article => Object.values(article).some(value => value !== undefined), {
+    message: 'At least one article field is required',
+  });
+
 export const LoginPayloadSchema = z.object({
   email: z.email(),
   password: z.string().min(1),
@@ -107,6 +124,8 @@ export type CommentsResponse = z.infer<typeof CommentsResponseSchema>;
 export type CommentResponse = z.infer<typeof CommentResponseSchema>;
 export type ProfileResponse = z.infer<typeof ProfileResponseSchema>;
 export type TagsResponse = z.infer<typeof TagsResponseSchema>;
+export type ArticlePayload = z.infer<typeof ArticlePayloadSchema>;
+export type UpdateArticlePayload = z.infer<typeof UpdateArticlePayloadSchema>;
 export type LoginPayload = z.infer<typeof LoginPayloadSchema>;
 export type RegisterPayload = z.infer<typeof RegisterPayloadSchema>;
 export type UpdateUserPayload = z.infer<typeof UpdateUserPayloadSchema>;

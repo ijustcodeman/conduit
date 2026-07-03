@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 import HomeView from '@/views/HomeView.vue';
 import ArticleDetailView from '@/views/ArticleDetailView.vue';
+import ArticleEditorView from '@/views/ArticleEditorView.vue';
 import LoginView from '@/views/LoginView.vue';
 import ProfileView from '@/views/ProfileView.vue';
 import RegisterView from '@/views/RegisterView.vue';
@@ -19,6 +20,18 @@ export const router = createRouter({
       path: '/article/:slug',
       name: 'article',
       component: ArticleDetailView,
+    },
+    {
+      path: '/editor',
+      name: 'article-create',
+      component: ArticleEditorView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/editor/:slug',
+      name: 'article-edit',
+      component: ArticleEditorView,
+      meta: { requiresAuth: true },
     },
     {
       path: '/profile/:username',

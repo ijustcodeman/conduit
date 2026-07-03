@@ -16,6 +16,11 @@ const commentForm = reactive({
   body: '',
 });
 
+const isAuthor = computed(
+  () =>
+    auth.user.value?.username === articleState.article.value?.author.username,
+);
+
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
   year: 'numeric',
   month: 'long',
@@ -84,6 +89,24 @@ async function submitComment() {
           <span aria-hidden="true">♥</span>
           {{ articleState.article.value.favorited ? 'Unfavorite' : 'Favorite' }}
           {{ articleState.article.value.favoritesCount }}
+        </button>
+      </div>
+
+      <div v-if="isAuthor" class="article-owner-actions">
+        <RouterLink
+          :to="{
+            name: 'article-edit',
+            params: { slug: articleState.article.value.slug },
+          }"
+        >
+          Edit story
+        </RouterLink>
+        <button
+          type="button"
+          :disabled="articleState.isDeleting.value"
+          @click="articleState.deleteArticle"
+        >
+          {{ articleState.isDeleting.value ? 'Deleting...' : 'Delete story' }}
         </button>
       </div>
     </header>
@@ -157,8 +180,7 @@ async function submitComment() {
       >
         <li v-for="comment in commentState.comments.value" :key="comment.id">
           <article class="comment-card">
-            <p>{{ comment.body }}</p>
-            <footer>
+            <header>
               <div>
                 <RouterLink
                   class="author-link"
@@ -181,7 +203,8 @@ async function submitComment() {
               >
                 Delete
               </button>
-            </footer>
+            </header>
+            <p>{{ comment.body }}</p>
           </article>
         </li>
       </ol>

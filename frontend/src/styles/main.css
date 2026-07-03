@@ -450,6 +450,47 @@ a {
   font-size: 0.875rem;
 }
 
+.article-owner-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.article-owner-actions a,
+.article-owner-actions button,
+.editor-actions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid #d6d6d6;
+  border-radius: 999px;
+  color: #242424;
+  background: #ffffff;
+  font-size: 0.925rem;
+  text-decoration: none;
+}
+
+.article-owner-actions a:hover,
+.editor-actions a:hover {
+  border-color: #242424;
+}
+
+.article-owner-actions button {
+  border-color: #c94a4a;
+  color: #9f1d1d;
+}
+
+.article-owner-actions button:hover:not(:disabled) {
+  background: #fff7f7;
+}
+
+.article-owner-actions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .article-body {
   padding: 8px 0 12px;
   border: 0;
@@ -547,24 +588,25 @@ a {
   background: #ffffff;
 }
 
-.comment-card > p {
-  margin: 0 0 16px;
-  color: #242424;
-  white-space: pre-wrap;
-}
-
-.comment-card footer {
+.comment-card header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  margin-bottom: 14px;
 }
 
-.comment-card footer div {
+.comment-card header div {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.comment-card > p {
+  margin: 0;
+  color: #242424;
+  white-space: pre-wrap;
 }
 
 .comment-card time {
@@ -593,6 +635,59 @@ a {
 .auth-page {
   display: flex;
   justify-content: center;
+}
+
+.editor-page {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.editor-form {
+  display: grid;
+  gap: 22px;
+}
+
+.editor-form label {
+  display: grid;
+  gap: 8px;
+  color: #242424;
+  font-weight: 600;
+}
+
+.editor-form input,
+.editor-form textarea {
+  width: 100%;
+  padding: 10px 0;
+  border: 0;
+  border-bottom: 1px solid #d6d6d6;
+  color: #242424;
+  background: transparent;
+}
+
+.editor-form input {
+  min-height: 48px;
+  font-size: 1.1rem;
+}
+
+.editor-form textarea {
+  resize: vertical;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.15rem;
+  line-height: 1.7;
+}
+
+.editor-form input:focus,
+.editor-form textarea:focus {
+  border-bottom-color: #242424;
+  outline: 0;
+}
+
+.editor-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 8px;
 }
 
 .auth-panel {
@@ -723,7 +818,7 @@ a {
   .article-preview-header,
   .article-meta-row,
   .article-preview-footer,
-  .comment-card footer,
+  .comment-card header,
   .pagination {
     align-items: flex-start;
     flex-direction: column;

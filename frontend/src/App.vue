@@ -20,6 +20,9 @@ async function logout() {
           <RouterLink to="/">Home</RouterLink>
         </li>
         <li v-if="auth.isAuthenticated.value">
+          <RouterLink to="/editor">Write</RouterLink>
+        </li>
+        <li v-if="auth.isAuthenticated.value">
           <RouterLink to="/settings">Settings</RouterLink>
         </li>
         <li v-if="auth.isAuthenticated.value && auth.user.value" class="user-chip">

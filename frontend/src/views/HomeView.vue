@@ -42,7 +42,7 @@ function selectPersonalFeed() {
 
 function selectTag(tag: string) {
   activeFeed.value = 'global';
-  selectedTag.value = tag;
+  selectedTag.value = selectedTag.value === tag ? null : tag;
 }
 
 function clearTag() {
@@ -81,9 +81,10 @@ function clearTag() {
           v-if="selectedTag"
           class="active"
           type="button"
+          :aria-label="`Clear ${selectedTag} tag filter`"
           @click="clearTag"
         >
-          #{{ selectedTag }}
+          #{{ selectedTag }} ×
         </button>
       </div>
 
@@ -147,6 +148,7 @@ function clearTag() {
           <button
             :class="{ active: selectedTag === tag }"
             type="button"
+            :aria-pressed="selectedTag === tag"
             @click="selectTag(tag)"
           >
             {{ tag }}

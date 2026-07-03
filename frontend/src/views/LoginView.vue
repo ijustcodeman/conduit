@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive } from 'vue';
+import { computed, onBeforeUnmount, onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 
@@ -15,6 +15,14 @@ const form = reactive({
 const redirectTarget = computed(() =>
   typeof route.query.redirect === 'string' ? route.query.redirect : '/',
 );
+
+onMounted(() => {
+  auth.clearErrors();
+});
+
+onBeforeUnmount(() => {
+  auth.clearErrors();
+});
 
 async function submitLogin() {
   try {
