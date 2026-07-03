@@ -14,7 +14,7 @@ async function logout() {
 <template>
   <header class="site-header">
     <nav class="site-nav" aria-label="Main navigation">
-      <RouterLink class="brand" to="/">Article</RouterLink>
+      <RouterLink class="brand" to="/">Conduit</RouterLink>
       <ul>
         <li>
           <RouterLink to="/">Home</RouterLink>

@@ -52,7 +52,6 @@ function clearTag() {
 
 <template>
   <section class="page-heading" aria-labelledby="home-title">
-    <p>Web Engineering 2</p>
     <h1 id="home-title">{{ pageTitle }}</h1>
   </section>
 
