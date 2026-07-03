@@ -20,6 +20,7 @@ const isAuthor = computed(
   () =>
     auth.user.value?.username === articleState.article.value?.author.username,
 );
+const defaultProfileImage = '/default-avatar.svg';
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
   year: 'numeric',
@@ -62,22 +63,24 @@ async function submitComment() {
       <h1>{{ articleState.article.value.title }}</h1>
 
       <div class="article-meta-row">
-        <div>
-          <RouterLink
-            class="author-link"
-            :to="{
-              name: 'profile',
-              params: { username: articleState.article.value.author.username },
-            }"
+        <RouterLink
+          class="author-summary"
+          :to="{
+            name: 'profile',
+            params: { username: articleState.article.value.author.username },
+          }"
+        >
+          <img
+            :src="articleState.article.value.author.image || defaultProfileImage"
+            :alt="`${articleState.article.value.author.username}'s profile image`"
           >
-            {{ articleState.article.value.author.username }}
-          </RouterLink>
-          <p>
+          <span>
+            <strong>{{ articleState.article.value.author.username }}</strong>
             <time :datetime="articleState.article.value.createdAt">
               {{ formatDate(articleState.article.value.createdAt) }}
             </time>
-          </p>
-        </div>
+          </span>
+        </RouterLink>
 
         <button
           class="favorite-button"
@@ -181,20 +184,24 @@ async function submitComment() {
         <li v-for="comment in commentState.comments.value" :key="comment.id">
           <article class="comment-card">
             <header>
-              <div>
-                <RouterLink
-                  class="author-link"
-                  :to="{
-                    name: 'profile',
-                    params: { username: comment.author.username },
-                  }"
+              <RouterLink
+                class="author-summary small"
+                :to="{
+                  name: 'profile',
+                  params: { username: comment.author.username },
+                }"
+              >
+                <img
+                  :src="comment.author.image || defaultProfileImage"
+                  :alt="`${comment.author.username}'s profile image`"
                 >
-                  {{ comment.author.username }}
-                </RouterLink>
-                <time :datetime="comment.createdAt">
-                  {{ formatDate(comment.createdAt) }}
-                </time>
-              </div>
+                <span>
+                  <strong>{{ comment.author.username }}</strong>
+                  <time :datetime="comment.createdAt">
+                    {{ formatDate(comment.createdAt) }}
+                  </time>
+                </span>
+              </RouterLink>
               <button
                 v-if="auth.user.value?.username === comment.author.username"
                 type="button"

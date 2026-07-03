@@ -13,6 +13,7 @@ export type ArticleFeedMode = 'global' | 'personal';
 type UseArticlesOptions = {
   feedMode: Ref<ArticleFeedMode>;
   selectedTag: Ref<string | null>;
+  author?: Ref<string | null>;
 };
 
 const PAGE_SIZE = 10;
@@ -26,6 +27,7 @@ export function useArticles(options: UseArticlesOptions) {
   const isLoading = ref(false);
   const errorMessages = ref<string[]>([]);
   const pendingFavoriteSlug = ref<string | null>(null);
+  const authorFilter = options.author ?? ref<string | null>(null);
   let requestId = 0;
 
   const page = computed(() => Math.floor(offset.value / PAGE_SIZE) + 1);
@@ -36,14 +38,14 @@ export function useArticles(options: UseArticlesOptions) {
   const canGoNext = computed(() => offset.value + PAGE_SIZE < articlesCount.value);
 
   watch(
-    [options.feedMode, options.selectedTag],
+    [options.feedMode, options.selectedTag, authorFilter],
     () => {
       offset.value = 0;
     },
   );
 
   watch(
-    [options.feedMode, options.selectedTag, offset],
+    [options.feedMode, options.selectedTag, authorFilter, offset],
     () => {
       void fetchArticles();
     },
@@ -67,6 +69,10 @@ export function useArticles(options: UseArticlesOptions) {
             tag:
               options.feedMode.value === 'global'
                 ? options.selectedTag.value ?? undefined
+                : undefined,
+            author:
+              options.feedMode.value === 'global'
+                ? authorFilter.value ?? undefined
                 : undefined,
           },
         },

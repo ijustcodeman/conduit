@@ -10,6 +10,8 @@ const emit = defineEmits<{
   favorite: [article: Article];
 }>();
 
+const defaultProfileImage = '/default-avatar.svg';
+
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
   year: 'numeric',
   month: 'short',
@@ -24,17 +26,19 @@ function formatDate(value: string) {
 <template>
   <article class="article-preview">
     <header class="article-preview-header">
-      <div>
-        <RouterLink
-          class="author-link"
-          :to="{ name: 'profile', params: { username: article.author.username } }"
+      <RouterLink
+        class="author-summary"
+        :to="{ name: 'profile', params: { username: article.author.username } }"
+      >
+        <img
+          :src="article.author.image || defaultProfileImage"
+          :alt="`${article.author.username}'s profile image`"
         >
-          {{ article.author.username }}
-        </RouterLink>
-        <p>
+        <span>
+          <strong>{{ article.author.username }}</strong>
           <time :datetime="article.createdAt">{{ formatDate(article.createdAt) }}</time>
-        </p>
-      </div>
+        </span>
+      </RouterLink>
 
       <button
         class="favorite-button"
