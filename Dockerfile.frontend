@@ -1,18 +1,14 @@
-FROM node:20-bookworm-slim AS frontend-build
+FROM node:20-alpine AS frontend-build
 
-WORKDIR /app
+WORKDIR /app/frontend
 
 RUN corepack enable
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends python3 make g++ openssl ca-certificates \
-  && rm -rf /var/lib/apt/lists/*
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY frontend/package.json ./frontend/package.json
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
-COPY frontend ./frontend
-RUN pnpm frontend:build
+COPY frontend ./
+RUN pnpm build
 
 FROM nginx:1.27-alpine AS frontend
 
