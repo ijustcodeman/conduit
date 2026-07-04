@@ -1,11 +1,28 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 
 const auth = useAuth();
 const router = useRouter();
+const isAccountMenuOpen = ref(false);
+const defaultProfileImage = '/default-avatar.svg';
+
+const profileRoute = computed(() => ({
+  name: 'profile',
+  params: { username: auth.user.value?.username ?? '' },
+}));
+
+function toggleAccountMenu() {
+  isAccountMenuOpen.value = !isAccountMenuOpen.value;
+}
+
+function closeAccountMenu() {
+  isAccountMenuOpen.value = false;
+}
 
 async function logout() {
+  closeAccountMenu();
   auth.logout();
   await router.push('/');
 }
@@ -22,14 +39,34 @@ async function logout() {
         <li v-if="auth.isAuthenticated.value">
           <RouterLink to="/editor">Write</RouterLink>
         </li>
-        <li v-if="auth.isAuthenticated.value">
-          <RouterLink to="/settings">Settings</RouterLink>
-        </li>
-        <li v-if="auth.isAuthenticated.value && auth.user.value" class="user-chip">
-          {{ auth.user.value.username }}
-        </li>
-        <li v-if="auth.isAuthenticated.value">
-          <button type="button" @click="logout">Log out</button>
+        <li v-if="auth.isAuthenticated.value && auth.user.value" class="account-menu">
+          <button
+            class="account-menu-button"
+            type="button"
+            :aria-expanded="isAccountMenuOpen"
+            aria-haspopup="menu"
+            @click="toggleAccountMenu"
+          >
+            <img
+              :src="auth.user.value.image || defaultProfileImage"
+              :alt="`${auth.user.value.username}'s profile image`"
+            >
+            <span>{{ auth.user.value.username }}</span>
+          </button>
+
+          <div v-if="isAccountMenuOpen" class="account-menu-panel" role="menu">
+            <RouterLink
+              :to="profileRoute"
+              role="menuitem"
+              @click="closeAccountMenu"
+            >
+              Profile
+            </RouterLink>
+            <RouterLink to="/settings" role="menuitem" @click="closeAccountMenu">
+              Settings
+            </RouterLink>
+            <button type="button" role="menuitem" @click="logout">Log out</button>
+          </div>
         </li>
         <li v-if="!auth.isAuthenticated.value">
           <RouterLink to="/login">Sign in</RouterLink>

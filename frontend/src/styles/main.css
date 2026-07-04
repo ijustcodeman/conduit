@@ -91,23 +91,80 @@ a {
 }
 
 .site-nav a[href="/register"],
-.site-nav a[href="/login"].router-link-active,
-.site-nav button {
+.site-nav a[href="/login"].router-link-active {
   border-color: #191919;
   color: #ffffff;
   background: #191919;
 }
 
 .site-nav a[href="/register"]:hover,
-.site-nav a[href="/login"].router-link-active:hover,
-.site-nav button:hover {
+.site-nav a[href="/login"].router-link-active:hover {
   color: #ffffff;
   background: #000000;
 }
 
-.user-chip {
+.account-menu {
+  position: relative;
+}
+
+.site-nav .account-menu-button {
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 10px 0 4px;
+  border: 1px solid #e6e6e6;
   color: #242424;
-  font-weight: 600;
+  background: transparent;
+}
+
+.site-nav .account-menu-button:hover,
+.site-nav .account-menu-button[aria-expanded="true"] {
+  color: #000000;
+  background: #f2f2f2;
+}
+
+.account-menu-button img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f2f2f2;
+}
+
+.account-menu-button span {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-menu-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 20;
+  display: grid;
+  min-width: 180px;
+  padding: 8px;
+  border: 1px solid #e6e6e6;
+  background: #ffffff;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 10%);
+}
+
+.site-nav .account-menu-panel a,
+.site-nav .account-menu-panel button {
+  justify-content: flex-start;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 0;
+  color: #242424;
+  background: transparent;
+}
+
+.site-nav .account-menu-panel a:hover,
+.site-nav .account-menu-panel button:hover {
+  color: #000000;
+  background: #f2f2f2;
 }
 
 .page-shell {
@@ -642,8 +699,11 @@ a {
 .comment-form label {
   display: grid;
   gap: 8px;
-  color: #242424;
+  color: #6b6b6b;
+  font-size: 0.78rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .comment-form textarea {
@@ -654,6 +714,9 @@ a {
   border-radius: 0;
   color: #242424;
   background: #ffffff;
+  font-size: 1rem;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .comment-form textarea:focus {
@@ -742,6 +805,95 @@ a {
   margin: 0 auto;
 }
 
+.settings-page {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.settings-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+
+.settings-preview {
+  position: sticky;
+  top: 104px;
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  padding-right: 28px;
+  border-right: 1px solid #e6e6e6;
+}
+
+.settings-preview img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f2f2f2;
+}
+
+.settings-preview h2 {
+  margin: 0;
+  color: #000000;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.settings-preview p {
+  margin: 0;
+  color: #6b6b6b;
+}
+
+.settings-form {
+  display: grid;
+  gap: 20px;
+}
+
+.settings-form label {
+  display: grid;
+  gap: 8px;
+  color: #6b6b6b;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.settings-form input,
+.settings-form textarea {
+  width: 100%;
+  padding: 10px 0;
+  border: 0;
+  border-bottom: 1px solid #d6d6d6;
+  color: #242424;
+  background: transparent;
+  font-size: 1.05rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.settings-form input {
+  min-height: 44px;
+}
+
+.settings-form textarea {
+  resize: vertical;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.settings-form input:focus,
+.settings-form textarea:focus {
+  border-bottom-color: #242424;
+  outline: 0;
+}
+
 .editor-form {
   display: grid;
   gap: 22px;
@@ -750,8 +902,11 @@ a {
 .editor-form label {
   display: grid;
   gap: 8px;
-  color: #242424;
-  font-weight: 600;
+  color: #6b6b6b;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .editor-form input,
@@ -762,11 +917,13 @@ a {
   border-bottom: 1px solid #d6d6d6;
   color: #242424;
   background: transparent;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .editor-form input {
   min-height: 48px;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
 }
 
 .editor-form textarea {
@@ -828,8 +985,11 @@ a {
 .form-stack label {
   display: grid;
   gap: 6px;
-  color: #242424;
-  font-weight: 600;
+  color: #6b6b6b;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .form-stack input {
@@ -840,6 +1000,9 @@ a {
   border-radius: 0;
   color: #242424;
   background: #ffffff;
+  font-size: 1rem;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .form-stack input:focus {
@@ -911,6 +1074,18 @@ a {
   .profile-header {
     grid-template-columns: 1fr;
     align-items: start;
+  }
+
+  .settings-layout {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .settings-preview {
+    position: static;
+    padding: 0 0 24px;
+    border-right: 0;
+    border-bottom: 1px solid #e6e6e6;
   }
 
   .sidebar {
