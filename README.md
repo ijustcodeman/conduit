@@ -70,7 +70,7 @@ pnpm frontend:dev
 Open:
 
 ```text
-http://localhost:5173/
+http://localhost:5000/
 ```
 
 ## Seeded Test Users
@@ -101,4 +101,3 @@ Build frontend:
 ```bash
 pnpm frontend:build
 ```
-
