@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useArticleEditor } from '@/composables/useArticleEditor';
 
@@ -10,6 +10,7 @@ const slug = computed(() =>
   typeof route.params.slug === 'string' ? route.params.slug : null,
 );
 const editor = useArticleEditor(slug);
+const tagInput = ref('');
 
 const pageTitle = computed(() =>
   editor.isEditing.value ? 'Edit story' : 'Write a story',
@@ -17,14 +18,52 @@ const pageTitle = computed(() =>
 const submitLabel = computed(() =>
   editor.isEditing.value ? 'Save changes' : 'Publish',
 );
+const tags = computed(() => parseTags(editor.form.tags));
 
 async function submitArticle() {
+  addTag();
+
   try {
     const article = await editor.saveArticle();
     await router.push({ name: 'article', params: { slug: article.slug } });
   } catch {
     // User-facing errors are exposed by the editor composable.
   }
+}
+
+function handleTagKeydown(event: KeyboardEvent) {
+  if (event.key !== ' ' && event.key !== ',' && event.key !== 'Enter') {
+    return;
+  }
+
+  event.preventDefault();
+  addTag();
+}
+
+function addTag() {
+  const nextTag = tagInput.value.trim().replace(/^#/, '');
+
+  if (!nextTag) {
+    tagInput.value = '';
+    return;
+  }
+
+  const nextTags = [...tags.value, nextTag];
+  editor.form.tags = Array.from(new Set(nextTags)).join(', ');
+  tagInput.value = '';
+}
+
+function removeTag(tag: string) {
+  editor.form.tags = tags.value
+    .filter(currentTag => currentTag !== tag)
+    .join(', ');
+}
+
+function parseTags(value: string) {
+  return value
+    .split(',')
+    .map(tag => tag.trim())
+    .filter(Boolean);
 }
 </script>
 
@@ -75,15 +114,32 @@ async function submitArticle() {
         />
       </label>
 
-      <label v-if="!editor.isEditing.value">
-        Tags
-        <input
-          v-model="editor.form.tags"
-          autocomplete="off"
-          name="tags"
-          type="text"
-        >
-      </label>
+      <div v-if="!editor.isEditing.value" class="tag-editor">
+        <label for="article-tags">Tags</label>
+        <div class="tag-editor-box">
+          <ul v-if="tags.length" class="tag-editor-list" aria-label="Selected tags">
+            <li v-for="tag in tags" :key="tag">
+              <span>{{ tag }}</span>
+              <button
+                type="button"
+                :aria-label="`Remove ${tag} tag`"
+                @click="removeTag(tag)"
+              >
+                ×
+              </button>
+            </li>
+          </ul>
+          <input
+            id="article-tags"
+            v-model="tagInput"
+            autocomplete="off"
+            name="tag-input"
+            type="text"
+            @blur="addTag"
+            @keydown="handleTagKeydown"
+          >
+        </div>
+      </div>
 
       <div class="editor-actions">
         <RouterLink

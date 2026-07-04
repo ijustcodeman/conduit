@@ -101,7 +101,7 @@ export class AuthService {
     userId: number,
     updateUserDto: UpdateUserDto,
   ): Promise<AuthResponse> {
-    const { email, username, password } = updateUserDto.user;
+    const { email, username, password, currentPassword } = updateUserDto.user;
 
     if (email) {
       const existingEmail = await this.userService.findByEmail(email);
@@ -119,8 +119,28 @@ export class AuthService {
       }
     }
 
+    if (password) {
+      const currentUser = await this.userService.findById(userId);
+
+      if (!currentUser) {
+        throw new UnauthorizedException();
+      }
+
+      const currentPasswordMatches = await bcrypt.compare(
+        currentPassword ?? '',
+        currentUser.password,
+      );
+
+      if (!currentPasswordMatches) {
+        throw specError('Current password is incorrect');
+      }
+    }
+
+    const { currentPassword: _currentPassword, ...userUpdates } =
+      updateUserDto.user;
+
     const user = await this.updateUserWithSpecErrors(userId, {
-      ...updateUserDto.user,
+      ...userUpdates,
       ...(password ? { password: await bcrypt.hash(password, 10) } : {}),
     });
 

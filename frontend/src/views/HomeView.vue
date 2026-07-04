@@ -8,11 +8,13 @@ import { useTags } from '@/composables/useTags';
 const auth = useAuth();
 const activeFeed = ref<ArticleFeedMode>('global');
 const selectedTag = ref<string | null>(null);
+const showAllTags = ref(false);
 const articles = useArticles({
   feedMode: activeFeed,
   selectedTag,
 });
 const tags = useTags();
+const visibleTagLimit = 12;
 
 const pageTitle = computed(() =>
   selectedTag.value
@@ -20,6 +22,12 @@ const pageTitle = computed(() =>
     : activeFeed.value === 'global'
       ? 'Global Feed'
       : 'Your Feed',
+);
+const visibleTags = computed(() =>
+  showAllTags.value ? tags.tags.value : tags.tags.value.slice(0, visibleTagLimit),
+);
+const hiddenTagsCount = computed(() =>
+  Math.max(0, tags.tags.value.length - visibleTagLimit),
 );
 
 watch(activeFeed, feed => {
@@ -141,10 +149,10 @@ function clearTag() {
     </div>
 
     <aside class="sidebar" aria-labelledby="tags-title">
-      <h2 id="tags-title">Popular Tags</h2>
+      <h2 id="tags-title">Explore tags</h2>
       <p v-if="tags.isLoading.value">Loading tags...</p>
       <ul v-else-if="tags.tags.value.length" class="tag-cloud">
-        <li v-for="tag in tags.tags.value" :key="tag">
+        <li v-for="tag in visibleTags" :key="tag">
           <button
             :class="{ active: selectedTag === tag }"
             type="button"
@@ -156,6 +164,15 @@ function clearTag() {
         </li>
       </ul>
       <p v-else>No tags yet.</p>
+
+      <button
+        v-if="hiddenTagsCount > 0"
+        class="tag-toggle-button"
+        type="button"
+        @click="showAllTags = !showAllTags"
+      >
+        {{ showAllTags ? 'Show fewer' : `Show ${hiddenTagsCount} more` }}
+      </button>
 
       <ul v-if="tags.errorMessages.value.length" class="error-list compact" role="alert">
         <li v-for="message in tags.errorMessages.value" :key="message">

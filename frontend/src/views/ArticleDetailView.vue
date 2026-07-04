@@ -42,6 +42,26 @@ async function submitComment() {
     // User-facing errors are exposed by the comments composable.
   }
 }
+
+async function confirmDeleteArticle() {
+  const shouldDelete = window.confirm(
+    'Delete this story? This cannot be undone.',
+  );
+
+  if (shouldDelete) {
+    await articleState.deleteArticle();
+  }
+}
+
+async function confirmDeleteComment(commentId: number) {
+  const shouldDelete = window.confirm(
+    'Delete this comment? This cannot be undone.',
+  );
+
+  if (shouldDelete) {
+    await commentState.deleteComment(commentId);
+  }
+}
 </script>
 
 <template>
@@ -107,7 +127,7 @@ async function submitComment() {
         <button
           type="button"
           :disabled="articleState.isDeleting.value"
-          @click="articleState.deleteArticle"
+          @click="confirmDeleteArticle"
         >
           {{ articleState.isDeleting.value ? 'Deleting...' : 'Delete story' }}
         </button>
@@ -206,7 +226,7 @@ async function submitComment() {
                 v-if="auth.user.value?.username === comment.author.username"
                 type="button"
                 :disabled="commentState.pendingDeleteId.value === comment.id"
-                @click="commentState.deleteComment(comment.id)"
+                @click="confirmDeleteComment(comment.id)"
               >
                 Delete
               </button>

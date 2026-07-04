@@ -12,11 +12,19 @@ const auth = useAuth();
 const username = computed(() => String(route.params.username));
 const selectedTag = ref<string | null>(null);
 const activeFeed = ref<'global'>('global');
+const activeProfileTab = ref<'stories' | 'liked'>('stories');
+const authorFilter = computed(() =>
+  activeProfileTab.value === 'stories' ? username.value : null,
+);
+const favoritedFilter = computed(() =>
+  activeProfileTab.value === 'liked' ? username.value : null,
+);
 const profileState = useProfile(username);
 const articles = useArticles({
   feedMode: activeFeed,
   selectedTag,
-  author: username,
+  author: authorFilter,
+  favorited: favoritedFilter,
 });
 
 const isOwnProfile = computed(
@@ -26,6 +34,7 @@ const defaultProfileImage = '/default-avatar.svg';
 
 watch(username, () => {
   selectedTag.value = null;
+  activeProfileTab.value = 'stories';
 });
 </script>
 
@@ -76,9 +85,34 @@ watch(username, () => {
     <section class="profile-articles" aria-labelledby="profile-articles-title">
       <header class="section-heading">
         <h2 id="profile-articles-title">
-          Stories by {{ profileState.profile.value.username }}
+          {{
+            activeProfileTab === 'stories'
+              ? `Stories by ${profileState.profile.value.username}`
+              : `Liked by ${profileState.profile.value.username}`
+          }}
         </h2>
       </header>
+
+      <div class="tab-list profile-tabs" role="tablist" aria-label="Profile article filters">
+        <button
+          :class="{ active: activeProfileTab === 'stories' }"
+          type="button"
+          role="tab"
+          :aria-selected="activeProfileTab === 'stories'"
+          @click="activeProfileTab = 'stories'"
+        >
+          Stories
+        </button>
+        <button
+          :class="{ active: activeProfileTab === 'liked' }"
+          type="button"
+          role="tab"
+          :aria-selected="activeProfileTab === 'liked'"
+          @click="activeProfileTab = 'liked'"
+        >
+          Liked
+        </button>
+      </div>
 
       <ul v-if="articles.errorMessages.value.length" class="error-list" role="alert">
         <li v-for="message in articles.errorMessages.value" :key="message">
@@ -94,7 +128,13 @@ watch(username, () => {
         aria-labelledby="profile-empty-title"
       >
         <h3 id="profile-empty-title">No stories yet</h3>
-        <p>This author has not published anything yet.</p>
+        <p>
+          {{
+            activeProfileTab === 'stories'
+              ? 'This author has not published anything yet.'
+              : 'This author has not liked any stories yet.'
+          }}
+        </p>
       </article>
 
       <ol v-else class="article-list" aria-label="Profile articles">

@@ -95,9 +95,13 @@ export const UpdateUserPayloadSchema = z
   .object({
     username: z.string().min(1).optional(),
     email: z.email().optional(),
+    currentPassword: z.string().min(1).optional(),
     password: z.string().min(8).optional(),
     bio: z.string().optional(),
     image: z.string().optional(),
+  })
+  .refine(user => !user.password || user.currentPassword, {
+    message: 'Current password is required to change password',
   })
   .refine(user => Object.values(user).some(value => value !== undefined), {
     message: 'At least one user field is required',

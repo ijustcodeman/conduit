@@ -9,6 +9,7 @@ const successMessage = ref('');
 const form = reactive({
   username: '',
   email: '',
+  currentPassword: '',
   password: '',
   bio: '',
   image: '',
@@ -33,6 +34,7 @@ watch(
     form.email = user.email;
     form.bio = user.bio;
     form.image = user.image;
+    form.currentPassword = '';
     form.password = '';
     successMessage.value = '';
   },
@@ -50,6 +52,7 @@ async function submitSettings() {
 
   try {
     await auth.updateCurrentUser(payload);
+    form.currentPassword = '';
     form.password = '';
     auth.clearErrors();
     successMessage.value = 'Settings saved.';
@@ -70,6 +73,7 @@ function buildUpdatePayload(): UpdateUserPayload {
   const email = form.email.trim();
   const bio = form.bio.trim();
   const image = form.image.trim();
+  const currentPassword = form.currentPassword;
   const password = form.password;
 
   if (username && username !== currentUser.username) {
@@ -89,6 +93,7 @@ function buildUpdatePayload(): UpdateUserPayload {
   }
 
   if (password) {
+    payload.currentPassword = currentPassword;
     payload.password = password;
   }
 
@@ -139,6 +144,18 @@ function buildUpdatePayload(): UpdateUserPayload {
             name="email"
             required
             type="email"
+          >
+        </label>
+
+        <label>
+          Current password
+          <input
+            v-model="form.currentPassword"
+            autocomplete="current-password"
+            minlength="1"
+            name="current-password"
+            :required="Boolean(form.password)"
+            type="password"
           >
         </label>
 
