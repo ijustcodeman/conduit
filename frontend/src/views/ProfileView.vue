@@ -32,6 +32,7 @@ const isOwnProfile = computed(
 );
 const defaultProfileImage = '/default-avatar.svg';
 
+/** Resets profile article filters when navigating to another profile. */
 watch(username, () => {
   selectedTag.value = null;
   activeProfileTab.value = 'stories';

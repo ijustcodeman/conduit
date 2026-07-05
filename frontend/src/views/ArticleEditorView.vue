@@ -20,6 +20,7 @@ const submitLabel = computed(() =>
 );
 const tags = computed(() => parseTags(editor.form.tags));
 
+/** Saves the article and navigates to its detail page. */
 async function submitArticle() {
   addTag();
 
@@ -31,6 +32,7 @@ async function submitArticle() {
   }
 }
 
+/** Converts tag separator keys into tag chips. */
 function handleTagKeydown(event: KeyboardEvent) {
   if (event.key !== ' ' && event.key !== ',' && event.key !== 'Enter') {
     return;
@@ -40,6 +42,7 @@ function handleTagKeydown(event: KeyboardEvent) {
   addTag();
 }
 
+/** Adds the current tag input to the editor form. */
 function addTag() {
   const nextTag = tagInput.value.trim().replace(/^#/, '');
 
@@ -53,12 +56,14 @@ function addTag() {
   tagInput.value = '';
 }
 
+/** Removes a tag from the editor form. */
 function removeTag(tag: string) {
   editor.form.tags = tags.value
     .filter(currentTag => currentTag !== tag)
     .join(', ');
 }
 
+/** Converts a comma-separated tag string into trimmed tag names. */
 function parseTags(value: string) {
   return value
     .split(',')

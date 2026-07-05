@@ -5,6 +5,7 @@ import { useAuth } from '@/composables/useAuth';
 import { apiRequest, getErrorMessages } from '@/lib/api';
 import { ArticleResponseSchema, type Article } from '@/types/api';
 
+/** Manages loading and actions for a single article detail page. */
 export function useArticle(slug: Ref<string>) {
   const auth = useAuth();
   const router = useRouter();
@@ -23,6 +24,7 @@ export function useArticle(slug: Ref<string>) {
     { immediate: true },
   );
 
+  /** Fetches the article matching the current route slug. */
   async function fetchArticle() {
     const currentRequestId = ++requestId;
 
@@ -49,6 +51,7 @@ export function useArticle(slug: Ref<string>) {
     }
   }
 
+  /** Toggles the current article as a favorite or redirects guests to login. */
   async function toggleFavorite() {
     if (!article.value) {
       return;
@@ -82,6 +85,7 @@ export function useArticle(slug: Ref<string>) {
     }
   }
 
+  /** Deletes the current article and returns to the home page. */
   async function deleteArticle() {
     if (!article.value) {
       return;

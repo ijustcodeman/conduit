@@ -18,6 +18,7 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
   day: 'numeric',
 });
 
+/** Formats an article timestamp for display in the preview card. */
 function formatDate(value: string) {
   return dateFormatter.format(new Date(value));
 }

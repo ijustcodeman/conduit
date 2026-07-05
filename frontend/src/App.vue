@@ -13,14 +13,17 @@ const profileRoute = computed(() => ({
   params: { username: auth.user.value?.username ?? '' },
 }));
 
+/** Toggles the authenticated account dropdown menu. */
 function toggleAccountMenu() {
   isAccountMenuOpen.value = !isAccountMenuOpen.value;
 }
 
+/** Closes the authenticated account dropdown menu. */
 function closeAccountMenu() {
   isAccountMenuOpen.value = false;
 }
 
+/** Logs out the current user and returns to the home page. */
 async function logout() {
   closeAccountMenu();
   auth.logout();

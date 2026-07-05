@@ -28,10 +28,12 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
   day: 'numeric',
 });
 
+/** Formats an article or comment timestamp for the detail page. */
 function formatDate(value: string) {
   return dateFormatter.format(new Date(value));
 }
 
+/** Submits the comment form and clears it after a successful create. */
 async function submitComment() {
   try {
     await commentState.createComment({
@@ -43,6 +45,7 @@ async function submitComment() {
   }
 }
 
+/** Confirms deletion before deleting the current article. */
 async function confirmDeleteArticle() {
   const shouldDelete = window.confirm(
     'Delete this story? This cannot be undone.',
@@ -53,6 +56,7 @@ async function confirmDeleteArticle() {
   }
 }
 
+/** Confirms deletion before deleting the selected comment. */
 async function confirmDeleteComment(commentId: number) {
   const shouldDelete = window.confirm(
     'Delete this comment? This cannot be undone.',

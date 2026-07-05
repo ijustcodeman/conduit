@@ -24,6 +24,7 @@ onBeforeUnmount(() => {
   auth.clearErrors();
 });
 
+/** Submits the login form and redirects to the requested page. */
 async function submitLogin() {
   try {
     await auth.login({
@@ -32,7 +33,7 @@ async function submitLogin() {
     });
     await router.push(redirectTarget.value);
   } catch {
-    // User-facing errors are exposed by the auth composable.
+    // User facing errors are exposed by the auth composable.
   }
 }
 </script>

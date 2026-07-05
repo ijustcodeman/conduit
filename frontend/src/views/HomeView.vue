@@ -40,19 +40,23 @@ onMounted(() => {
   void tags.fetchTags();
 });
 
+/** Shows the global article feed. */
 function selectGlobalFeed() {
   activeFeed.value = 'global';
 }
 
+/** Shows the authenticated user's personal article feed. */
 function selectPersonalFeed() {
   activeFeed.value = 'personal';
 }
 
+/** Toggles the selected tag filter and returns to the global feed. */
 function selectTag(tag: string) {
   activeFeed.value = 'global';
   selectedTag.value = selectedTag.value === tag ? null : tag;
 }
 
+/** Removes the current tag filter. */
 function clearTag() {
   selectedTag.value = null;
 }

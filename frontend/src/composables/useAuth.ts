@@ -31,7 +31,9 @@ watch(token, nextToken => {
 
 const isAuthenticated = computed(() => Boolean(token.value && user.value));
 
+/** Exposes shared authentication state and actions for the frontend. */
 export function useAuth() {
+  /** Logs in an existing user and stores the returned token. */
   async function login(payload: LoginPayload) {
     const response = await runAuthRequest(() =>
       apiRequest('/users/login', AuthResponseSchema, {
@@ -43,6 +45,7 @@ export function useAuth() {
     setAuthenticatedUser(response.user);
   }
 
+  /** Registers a new user and stores the returned token. */
   async function register(payload: RegisterPayload) {
     const response = await runAuthRequest(() =>
       apiRequest('/users', AuthResponseSchema, {
@@ -54,6 +57,7 @@ export function useAuth() {
     setAuthenticatedUser(response.user);
   }
 
+  /** Updates the current user's account and refreshes local auth state. */
   async function updateCurrentUser(payload: UpdateUserPayload) {
     const response = await runAuthRequest(() =>
       apiRequest('/user', AuthResponseSchema, {
@@ -65,6 +69,7 @@ export function useAuth() {
     setAuthenticatedUser(response.user);
   }
 
+  /** Loads the current user once when a stored token is available. */
   async function loadCurrentUser() {
     if (!token.value || hasLoadedCurrentUser.value) {
       hasLoadedCurrentUser.value = true;
@@ -85,12 +90,14 @@ export function useAuth() {
     }
   }
 
+  /** Clears all local authentication state. */
   function logout() {
     token.value = null;
     user.value = null;
     hasLoadedCurrentUser.value = true;
   }
 
+  /** Clears authentication error messages from the shared state. */
   function clearErrors() {
     errorMessages.value = [];
   }
@@ -111,6 +118,7 @@ export function useAuth() {
   };
 }
 
+/** Runs an auth request while managing loading and error state. */
 async function runAuthRequest<T>(request: () => Promise<T>): Promise<T> {
   try {
     isLoading.value = true;
@@ -124,6 +132,7 @@ async function runAuthRequest<T>(request: () => Promise<T>): Promise<T> {
   }
 }
 
+/** Stores an authenticated user and its token in shared state. */
 function setAuthenticatedUser(nextUser: User) {
   user.value = nextUser;
   token.value = nextUser.token;

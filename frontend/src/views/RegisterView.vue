@@ -20,6 +20,7 @@ onBeforeUnmount(() => {
   auth.clearErrors();
 });
 
+/** Submits the registration form and returns to the home page. */
 async function submitRegistration() {
   try {
     await auth.register({

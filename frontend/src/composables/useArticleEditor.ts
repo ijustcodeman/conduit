@@ -7,6 +7,7 @@ import {
   type Article,
 } from '@/types/api';
 
+/** Manages the article editor form for creating and updating articles. */
 export function useArticleEditor(slug: Ref<string | null>) {
   const form = reactive({
     title: '',
@@ -33,6 +34,7 @@ export function useArticleEditor(slug: Ref<string | null>) {
     { immediate: true },
   );
 
+  /** Loads an existing article into the editor form. */
   async function loadArticle() {
     if (!slug.value) {
       return;
@@ -58,6 +60,7 @@ export function useArticleEditor(slug: Ref<string | null>) {
     }
   }
 
+  /** Saves the editor form by creating or updating the article. */
   async function saveArticle() {
     try {
       isSaving.value = true;
@@ -77,6 +80,7 @@ export function useArticleEditor(slug: Ref<string | null>) {
     }
   }
 
+  /** Sends a create article request using the current form values. */
   async function createArticle() {
     return apiRequest('/articles', ArticleResponseSchema, {
       method: 'POST',
@@ -91,6 +95,7 @@ export function useArticleEditor(slug: Ref<string | null>) {
     });
   }
 
+  /** Sends an update article request for the current article slug. */
   async function updateArticle() {
     return apiRequest(`/articles/${slug.value}`, ArticleResponseSchema, {
       method: 'PUT',
@@ -104,6 +109,7 @@ export function useArticleEditor(slug: Ref<string | null>) {
     });
   }
 
+  /** Clears the editor form and any existing editor errors. */
   function resetForm() {
     article.value = null;
     form.title = '';
@@ -126,6 +132,7 @@ export function useArticleEditor(slug: Ref<string | null>) {
   };
 }
 
+/** Converts a comma-separated tag string into trimmed tag names. */
 function parseTags(tags: string) {
   return tags
     .split(',')

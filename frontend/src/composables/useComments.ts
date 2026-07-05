@@ -9,6 +9,7 @@ import {
   type CreateCommentPayload,
 } from '@/types/api';
 
+/** Manages comment loading, creation, and deletion for an article. */
 export function useComments(slug: Ref<string>) {
   const comments = ref<Comment[]>([]);
   const isLoading = ref(false);
@@ -25,6 +26,7 @@ export function useComments(slug: Ref<string>) {
     { immediate: true },
   );
 
+  /** Fetches comments for the current article slug. */
   async function fetchComments() {
     const currentRequestId = ++requestId;
 
@@ -51,6 +53,7 @@ export function useComments(slug: Ref<string>) {
     }
   }
 
+  /** Creates a new comment and prepends it to the local comment list. */
   async function createComment(payload: CreateCommentPayload) {
     try {
       isSaving.value = true;
@@ -74,6 +77,7 @@ export function useComments(slug: Ref<string>) {
     }
   }
 
+  /** Deletes a comment and removes it from the local comment list. */
   async function deleteComment(commentId: number) {
     try {
       pendingDeleteId.value = commentId;

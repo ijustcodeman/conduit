@@ -19,6 +19,7 @@ type UseArticlesOptions = {
 
 const PAGE_SIZE = 10;
 
+/** Manages article lists, filters, pagination, and favorite actions. */
 export function useArticles(options: UseArticlesOptions) {
   const auth = useAuth();
   const router = useRouter();
@@ -60,6 +61,7 @@ export function useArticles(options: UseArticlesOptions) {
     { immediate: true },
   );
 
+  /** Fetches the current page of articles for the selected feed and filters. */
   async function fetchArticles() {
     const currentRequestId = ++requestId;
 
@@ -111,18 +113,21 @@ export function useArticles(options: UseArticlesOptions) {
     }
   }
 
+  /** Moves the article list to the previous page when possible. */
   function goPrevious() {
     if (canGoPrevious.value) {
       offset.value = Math.max(0, offset.value - PAGE_SIZE);
     }
   }
 
+  /** Moves the article list to the next page when possible. */
   function goNext() {
     if (canGoNext.value) {
       offset.value += PAGE_SIZE;
     }
   }
 
+  /** Toggles favorite state for an article or redirects guests to login. */
   async function toggleFavorite(article: Article) {
     if (!auth.isAuthenticated.value) {
       await router.push({ name: 'login', query: { redirect: '/' } });

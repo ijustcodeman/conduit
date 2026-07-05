@@ -41,6 +41,7 @@ watch(
   { immediate: true },
 );
 
+/** Submits changed settings and displays a local success message. */
 async function submitSettings() {
   const payload = buildUpdatePayload();
 
@@ -61,6 +62,7 @@ async function submitSettings() {
   }
 }
 
+/** Builds an update payload containing only fields that changed. */
 function buildUpdatePayload(): UpdateUserPayload {
   const currentUser = auth.user.value;
   const payload: UpdateUserPayload = {};

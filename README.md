@@ -20,7 +20,7 @@ The project contains:
 The application can be started with a single Docker Compose command:
 
 ```bash
-docker compose up --build
+docker compose up
 ```
 
 Then open the frontend:

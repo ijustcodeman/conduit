@@ -2,11 +2,13 @@ import { ref } from 'vue';
 import { apiRequest, getErrorMessages } from '@/lib/api';
 import { TagsResponseSchema } from '@/types/api';
 
+/** Manages loading the available article tags. */
 export function useTags() {
   const tags = ref<string[]>([]);
   const isLoading = ref(false);
   const errorMessages = ref<string[]>([]);
 
+  /** Fetches all known tags from the backend. */
   async function fetchTags() {
     try {
       isLoading.value = true;

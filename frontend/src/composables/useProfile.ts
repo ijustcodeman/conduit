@@ -4,6 +4,7 @@ import { useAuth } from '@/composables/useAuth';
 import { apiRequest, getErrorMessages } from '@/lib/api';
 import { ProfileResponseSchema, type Profile } from '@/types/api';
 
+/** Manages loading and follow actions for a user profile. */
 export function useProfile(username: Ref<string>) {
   const auth = useAuth();
   const router = useRouter();
@@ -21,6 +22,7 @@ export function useProfile(username: Ref<string>) {
     { immediate: true },
   );
 
+  /** Fetches the profile for the current username. */
   async function fetchProfile() {
     const currentRequestId = ++requestId;
 
@@ -47,6 +49,7 @@ export function useProfile(username: Ref<string>) {
     }
   }
 
+  /** Toggles following for the profile or redirects guests to login. */
   async function toggleFollow() {
     if (!profile.value) {
       return;

@@ -9,6 +9,7 @@ export class ApiError extends Error {
   readonly status: number;
   readonly messages: string[];
 
+  /** Creates a normalized API error with status and displayable messages. */
   constructor(status: number, messages: string[]) {
     super(messages.join(' '));
     this.name = 'ApiError';
@@ -17,10 +18,12 @@ export class ApiError extends Error {
   }
 }
 
+/** Stores the callback used to read the current authentication token. */
 export function setTokenProvider(provider: () => string | null) {
   tokenProvider = provider;
 }
 
+/** Converts known error types into messages that can be shown in the UI. */
 export function getErrorMessages(error: unknown): string[] {
   if (error instanceof ApiError) {
     return error.messages;
@@ -43,6 +46,7 @@ type ApiOptions = {
   query?: Record<string, string | number | boolean | undefined>;
 };
 
+/** Sends an API request, validates the response, and returns typed data. */
 export async function apiRequest<T>(
   path: string,
   schema: z.ZodType<T>,
@@ -100,6 +104,7 @@ export async function apiRequest<T>(
   return result.data;
 }
 
+/** Extracts backend spec-error messages from an unknown response payload. */
 function parseErrorMessages(data: unknown): string[] {
   const result = SpecErrorResponseSchema.safeParse(data);
 

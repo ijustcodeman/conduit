@@ -59,6 +59,7 @@ export const router = createRouter({
   ],
 });
 
+/** Loads auth state and redirects users away from routes they cannot access. */
 router.beforeEach(async to => {
   const auth = useAuth();
 
