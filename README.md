@@ -1,19 +1,38 @@
 # Conduit
 
-RealWorld/Conduit article application for Web Engineering 2.
-
-The project contains:
-
-- NestJS backend API
-- Vue 3 frontend
-- SQLite database with seeded demo data
-- Docker and Docker Compose deployment
+Conduit article application for Web Engineering 2.
 
 ## Team Members
 
 | Full name | Matrikel-Nr. |
 | --- | --- |
 | Max Gebert | 21513 |
+
+## Tech Stack
+
+- TypeScript
+- Node.js
+- NestJS
+- Vue 3
+- Vue Router
+- Vite
+- Prisma
+- SQLite
+- Zod
+- JWT
+- Passport
+- bcrypt
+- Nginx
+- Docker
+- Docker Compose
+- pnpm
+- ESLint
+- Prettier
+- Jest
+
+## Building Block View
+
+![Building block view](./BuildingBlock.png)
 
 ## Run With Docker
 
