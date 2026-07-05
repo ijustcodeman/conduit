@@ -10,25 +10,11 @@ Conduit article application for Web Engineering 2.
 
 ## Tech Stack
 
-- TypeScript
-- Node.js
-- NestJS
-- Vue 3
-- Vue Router
-- Vite
-- Prisma
-- SQLite
-- Zod
-- JWT
-- Passport
-- bcrypt
-- Nginx
-- Docker
-- Docker Compose
-- pnpm
-- ESLint
-- Prettier
-- Jest
+- **Frontend:** Vue 3, Vue Router, Vite, TypeScript, Zod
+- **Backend:** Node.js, NestJS, TypeScript, Prisma, JWT, Passport, bcrypt, Zod
+- **Database:** SQLite
+- **Deployment:** Docker, Docker Compose, Nginx
+- **Tooling:** pnpm, ESLint, Prettier, Jest
 
 ## Building Block View
 
